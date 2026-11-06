@@ -2,6 +2,7 @@ import {
   ArrowUpRight,
   Coffee,
   LayoutDashboard,
+  LogOut,
   Menu,
   Package2,
   ShoppingBag,
@@ -11,6 +12,7 @@ import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { APP_NAME, NAV_ITEMS } from '../../constants/app'
 import { ProductsProvider } from '../provider/ProductsProvider'
+import { useAuth } from '../../context/useAuth'
 
 const icons = {
   overview: LayoutDashboard,
@@ -34,6 +36,7 @@ const pageCopy: Record<string, { title: string; subtitle: string }> = {
 }
 
 export function AppLayout() {
+  const auth = useAuth()
   const location = useLocation()
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const copy = pageCopy[location.pathname] ?? pageCopy['/']
@@ -84,8 +87,20 @@ export function AppLayout() {
             </div>
             <div className="workspace-user">
               <div className="user-avatar">W</div>
-              <div className="user-copy"><strong>WeBrew Café</strong><small>Owner workspace</small></div>
-              <ArrowUpRight size={15} className="user-arrow" />
+              <div className="user-copy"><strong>WeBrew Café</strong><small>{auth.email ?? 'Owner workspace'}</small></div>
+              {auth.email ? (
+                <button
+                  type="button"
+                  className="icon-button sign-out-button"
+                  aria-label="Sign out"
+                  title="Sign out"
+                  onClick={auth.logout}
+                >
+                  <LogOut size={15} />
+                </button>
+              ) : (
+                <ArrowUpRight size={15} className="user-arrow" />
+              )}
             </div>
           </div>
         </aside>
